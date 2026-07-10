@@ -3,15 +3,24 @@ package contacts.Services;
 import contacts.Entity.Contact;
 import contacts.Exceptions.BadIndexException;
 import contacts.Main;
-
 import java.util.List;
 import java.util.Scanner;
 
-public class ListService {
+/**
+ * Service handling operations related to listing contacts.
+ */
+public final class ListService {
 
-    private final EditingService editingService = new EditingService();
+    /** Service used to handle record editing workflows. */
+    private final EditService editService = new EditService();
 
-    public void listAction(List<Contact> list, Scanner scanner) {
+    /**
+     * Lists all contacts and handles interactive choices by record number.
+     *
+     * @param list    the list of contacts to display and manage
+     * @param scanner the scanner instance for reading input
+     */
+    public void listAction(final List<Contact> list, final Scanner scanner) {
         if (list.isEmpty()) {
             System.out.println("The Phone Book is empty!");
             return;
@@ -34,9 +43,11 @@ public class ListService {
                     Contact contact = Main.getContactSafe(list, index);
 
                     System.out.println(contact.getDetailedInfo());
-
                     System.out.println();
-                    if ("menu".equals(editingService.editActions(list, contact, scanner))) {
+
+                    String nextStep = editService.editActions(list,
+                            contact, scanner);
+                    if ("menu".equals(nextStep)) {
                         return;
                     }
                 } catch (BadIndexException e) {

@@ -1,29 +1,46 @@
 package contacts.Entity;
 
-import contacts.Main;
-
 import java.util.List;
 
-public class Organization extends Contact{
+/**
+ * Represents an Organization contact.
+ */
+public final class Organization extends Contact {
+
+    /** The address of the organization. */
     private String address;
 
-    public Organization(String name, String number, String address) {
+    /**
+     * Constructs a new Organization.
+     *
+     * @param name    the name of the organization
+     * @param number  the phone number of the organization
+     * @param addr    the physical address of the organization
+     */
+    public Organization(final String name,
+                        final String number,
+                        final String addr) {
         super(name, number, false);
-        this.address = address;
+        this.address = addr;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    /**
+     * Sets the organization's address and updates the modification time.
+     *
+     * @param addr the new address
+     */
+    public void setAddress(final String addr) {
+        this.address = addr;
         updateTime();
     }
 
+    /**
+     * Gets the organization's address.
+     *
+     * @return the address
+     */
     public String getAddress() {
         return address;
-    }
-
-    @Override
-    public String toString() {
-        return this.getName();
     }
 
     @Override
@@ -38,17 +55,17 @@ public class Organization extends Contact{
     }
 
     @Override
-    public void setFieldValue(String field, String value) {
+    public void setFieldValue(final String field, final String value) {
         switch (field) {
             case "name" -> this.setName(value);
-            case "number" -> this.setNumber(Main.checkNumber(value));
+            case "number" -> this.setNumber(value);
             case "address" -> this.setAddress(value);
-            default -> {return;}
+            default -> System.out.println("Bad field!");
         }
     }
 
     @Override
-    public String getFieldValue(String field) {
+    public String getFieldValue(final String field) {
         return switch (field) {
             case "name" -> this.getName();
             case "number" -> this.getNumber();
@@ -59,10 +76,10 @@ public class Organization extends Contact{
 
     @Override
     public String getDetailedInfo() {
-        return "Organization name: " + getName() + "\n" +
-                "Address: " + this.address + "\n" +
-                "Number: " + getNumber() + "\n" +
-                "Time created: " + formatTime(getTimeCreated()) + "\n" +
-                "Time last edit: " + formatTime(getTimeUpdated());
+        return "Organization name: " + getName() + "\n"
+                + "Address: " + this.address + "\n"
+                + "Number: " + getNumber() + "\n"
+                + "Time created: " + formatTime(getTimeCreated()) + "\n"
+                + "Time last edit: " + formatTime(getTimeUpdated());
     }
 }

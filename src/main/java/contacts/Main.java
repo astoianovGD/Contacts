@@ -3,18 +3,37 @@ package contacts;
 import contacts.Entity.Contact;
 import contacts.Enums.Action;
 import contacts.Exceptions.BadIndexException;
-import contacts.Services.*;
-
+import contacts.Services.ListService;
+import contacts.Services.OrganizationService;
+import contacts.Services.PersonService;
+import contacts.Services.SearchService;
+import contacts.Services.SerializationUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class Main {
-
+/**
+ * Main application class acting as the entry point for the contact system.
+ */
+public final class Main {
+    /** The active collection of contacts. */
     private static List<Contact> contacts = new ArrayList<>();
-    public static String fileName = null;
+    /** The storage file name for data serialization. */
+    private static String fileName = null;
 
-    public static void main(String[] args) {
+    /**
+     * Private constructor to hide the implicit public one on utility classes.
+     */
+    private Main() {
+        // Prevent instantiation
+    }
+
+    /**
+     * The main execution loop of the phone book application.
+     *
+     * @param args command-line arguments, expects file name as first parameter
+     */
+    public static void main(final String[] args) {
         Scanner scanner = new Scanner(System.in);
         if (args.length > 0) {
             fileName = args[0];
@@ -24,7 +43,8 @@ public class Main {
         contacts = SerializationUtils.deserialize(fileName);
 
         while (true) {
-            System.out.print("[menu] Enter action (add, list, search, count, exit): ");
+            System.out.print("[menu] Enter action "
+                    + "(add, list, search, count, exit): ");
             String input = scanner.nextLine().trim().toUpperCase();
             Action action;
             try {
@@ -34,7 +54,9 @@ public class Main {
                 continue;
             }
 
-            if (action == Action.EXIT) return;
+            if (action == Action.EXIT) {
+                return;
+            }
 
             try {
                 enterAction(action, scanner);
@@ -45,11 +67,17 @@ public class Main {
             }
             System.out.println();
         }
-
     }
 
-
-    public static void enterAction(Action action, Scanner scanner) throws BadIndexException {
+    /**
+     * Routes the selected application action to its specific handler service.
+     *
+     * @param action  the chosen application Action enum
+     * @param scanner the scanner instance for user input parsing
+     * @throws BadIndexException if handling requests an index out of bounds
+     */
+    public static void enterAction(final Action action, final Scanner scanner)
+            throws BadIndexException {
         switch (action) {
             case ADD -> {
                 System.out.print("Enter the type (person, organization): ");
@@ -60,53 +88,93 @@ public class Main {
                     return;
                 }
 
-                OrganizationService organizationService = new OrganizationService();
+                OrganizationService organizationService =
+                        new OrganizationService();
                 PersonService personService = new PersonService();
 
-                contacts.add(type.equals("person")  ? personService.newPerson(scanner) : organizationService.newOrganization(scanner));
+                contacts.add(type.equals("person")
+                        ? personService.newPerson(scanner)
+                        : organizationService.newOrganization(scanner));
                 System.out.println("The record added.");
                 SerializationUtils.serialize(contacts, fileName);
-
             }
             case SEARCH -> {
                 SearchService searchService = new SearchService();
                 searchService.searchAction(contacts, scanner);
-
             }
-            case COUNT -> System.out.println("The Phone Book has " + contacts.size() + " records.");
-
+            case COUNT -> System.out.println("The Phone Book has "
+                    + contacts.size() + " records.");
             case LIST -> {
                 ListService listService = new ListService();
                 listService.listAction(contacts, scanner);
-
             }
             default -> System.out.println("Wrong action!");
         }
     }
 
-
-    public static String checkNumber(String number) {
-        String regexp = "^\\+?(?:[a-zA-Z0-9]+(?:[ -][a-zA-Z0-9]{2,})*|\\([a-zA-Z0-9]+\\)(?:[ -][a-zA-Z0-9]{2,})*|[a-zA-Z0-9]+[ -]\\([a-zA-Z0-9]{2,}\\)(?:[ -][a-zA-Z0-9]{2,})*)$";
-        if (number.matches(regexp)) return number;
-        else {
+    /**
+     * Validates if a phone number string matches standard format requirements.
+     *
+     * @param number the raw number string input
+     * @return the valid number or a default error token placeholder
+     */
+    public static String checkNumber(final String number) {
+        String regexp = "^\\+?(?:[a-zA-Z0-9]+(?:[ -][a-zA-Z0-9]{2,})*|\\("
+                + "[a-zA-Z0-9]+\\)(?:[ -][a-zA-Z0-9]{2,})*|[a-zA-Z0-9]+[ -]"
+                + "\\([a-zA-Z0-9]{2,}\\)(?:[ -][a-zA-Z0-9]{2,})*)$";
+        if (number.matches(regexp)) {
+            return number;
+        } else {
             System.out.println("Wrong number format!");
             return "[no number]";
         }
     }
 
-    public static Contact getContactSafe(List<Contact> contacts, int userIndex) throws BadIndexException {
+    /**
+     * Safely fetches a specific contact matching user-provided numeric inputs.
+     *
+     * @param contactList the targeted database lookup collection
+     * @param userIndex   the index input from standard output (1-based index)
+     * @return the resolved contact context entity
+     * @throws BadIndexException
+     * if the requested index sits outside valid ranges
+     */
+    public static Contact getContactSafe(final List<Contact> contactList,
+                                         final int userIndex)
+            throws BadIndexException {
         int realIndex = userIndex - 1;
-        if (realIndex < 0 || realIndex >= contacts.size()) {
+        if (realIndex < 0 || realIndex >= contactList.size()) {
             throw new BadIndexException();
         }
-        return contacts.get(realIndex);
+        return contactList.get(realIndex);
     }
 
-    public static void printAllContacts(List<Contact> contactList) {
+    /**
+     * Prints all contacts onto terminal standard outputs.
+     *
+     * @param contactList the target records loop array list
+     */
+    public static void printAllContacts(final List<Contact> contactList) {
         for (int i = 0; i < contactList.size(); i++) {
             System.out.println((i + 1) + ". " + contactList.get(i));
         }
     }
 
+    /**
+     * Gets the serialization file name path configuration.
+     *
+     * @return the file location name string configured
+     */
+    public static String getFileName() {
+        return fileName;
+    }
 
+    /**
+     * Configures the active serialization output location manually.
+     *
+     * @param name target data save address string location value
+     */
+    public static void setFileName(final String name) {
+        fileName = name;
+    }
 }

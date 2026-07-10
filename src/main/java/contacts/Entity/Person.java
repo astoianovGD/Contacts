@@ -1,46 +1,91 @@
 package contacts.Entity;
 
-
 import contacts.Main;
-
 import java.util.List;
 
-public class Person extends Contact{
+/**
+ * Represents a Person contact.
+ */
+public final class Person extends Contact {
+    /** The surname of the person. */
     private String surname;
+    /** The birthdate of the person. */
     private String birth;
+    /** The gender of the person. */
     private String gender;
 
-    public Person(String name, String surname, String number, String birth, String gender) {
+    /**
+     * Constructs a new Person contact.
+     *
+     * @param name          the first name of the person
+     * @param personSurname the surname of the person
+     * @param number        the phone number
+     * @param birthDate     the birthdate
+     * @param personGender  the gender
+     */
+    public Person(final String name, final String personSurname,
+                  final String number, final String birthDate,
+                  final String personGender) {
         super(name, number, true);
-        this.surname = surname;
-        this.birth = birth;
-        this.gender = gender;
+        this.surname = personSurname;
+        this.birth = birthDate;
+        this.gender = personGender;
     }
 
+    /**
+     * Gets the person's surname.
+     *
+     * @return the surname
+     */
     public String getSurname() {
         return surname;
     }
 
-    public void setSurname(String surname) {
-        this.surname = surname;
+    /**
+     * Sets the person's surname.
+     *
+     * @param personSurname the new surname
+     */
+    public void setSurname(final String personSurname) {
+        this.surname = personSurname;
         updateTime();
     }
 
+    /**
+     * Gets the person's birthdate.
+     *
+     * @return the birthdate
+     */
     public String getBirth() {
         return birth;
     }
 
-    public void setBirth(String birth) {
-        this.birth = birth;
+    /**
+     * Sets the person's birthdate.
+     *
+     * @param birthDate the new birthdate
+     */
+    public void setBirth(final String birthDate) {
+        this.birth = birthDate;
         updateTime();
     }
 
+    /**
+     * Gets the person's gender.
+     *
+     * @return the gender
+     */
     public String getGender() {
         return gender;
     }
 
-    public void setGender(String gender) {
-        this.gender = gender;
+    /**
+     * Sets the person's gender.
+     *
+     * @param personGender the new gender
+     */
+    public void setGender(final String personGender) {
+        this.gender = personGender;
         updateTime();
     }
 
@@ -48,7 +93,6 @@ public class Person extends Contact{
     public String toString() {
         return this.getName() + " " + this.getSurname();
     }
-
 
     @Override
     public String getSearchableString() {
@@ -62,19 +106,19 @@ public class Person extends Contact{
     }
 
     @Override
-    public void setFieldValue(String field, String value) {
+    public void setFieldValue(final String field, final String value) {
         switch (field) {
             case "name" -> this.setName(value);
             case "surname" -> this.setSurname(value);
             case "number" -> this.setNumber(Main.checkNumber(value));
             case "birth" -> this.setBirth(value);
             case "gender" -> this.setGender(value);
-            default -> {return;}
+            default -> System.out.println("Bad field!");
         }
     }
 
     @Override
-    public String getFieldValue(String field) {
+    public String getFieldValue(final String field) {
         return switch (field) {
             case "name" -> this.getName();
             case "surname" -> this.getSurname();
@@ -85,14 +129,14 @@ public class Person extends Contact{
         };
     }
 
+    @Override
     public String getDetailedInfo() {
-        return "Name: " + getName() + "\n" +
-                "Surname: " + this.surname + "\n" +
-                "Birth date: " + this.birth + "\n" +
-                "Gender: " + this.gender + "\n" +
-                "Number: " + getNumber() + "\n" +
-                "Time created: " + formatTime(getTimeCreated()) + "\n" +
-                "Time last edit: " + formatTime(getTimeUpdated());
+        return "Name: " + getName() + "\n"
+                + "Surname: " + this.surname + "\n"
+                + "Birth date: " + this.birth + "\n"
+                + "Gender: " + this.gender + "\n"
+                + "Number: " + getNumber() + "\n"
+                + "Time created: " + formatTime(getTimeCreated()) + "\n"
+                + "Time last edit: " + formatTime(getTimeUpdated());
     }
-
 }

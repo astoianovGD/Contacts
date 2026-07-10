@@ -1,7 +1,17 @@
 package contacts.Exceptions;
 
-public class BadIndexException extends Exception{
-    public String getMessage(){
+/**
+ * Exception thrown when an invalid index is provided.
+ */
+public final class BadIndexException extends Exception {
+
+    /**
+     * Gets the exception message.
+     *
+     * @return the detailed error message string
+     */
+    @Override
+    public String getMessage() {
         return "Bad index!";
     }
 }

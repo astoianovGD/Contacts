@@ -1,47 +1,25 @@
 package contacts.Services;
 
 import contacts.Entity.Person;
-
-
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.Objects;
 import java.util.Scanner;
-
 import static contacts.Main.checkNumber;
 
-public class PersonService {
+/**
+ * Service handling operations related to creating and
+ * validating person contacts.
+ */
+public final class PersonService {
 
-    public void editPerson(Person person, Scanner scanner) {
-        System.out.print("Select a field (name, surname, number, birth, gender) ");
-        String field = scanner.nextLine().toLowerCase();
-        switch (field) {
-            case "name" -> {
-                System.out.print("Enter name: ");
-                person.setName(scanner.nextLine());
-            }
-            case "surname" -> {
-                System.out.print("Enter surname: ");
-                person.setSurname(scanner.nextLine());
-            }
-            case "number" -> {
-                System.out.print("Enter number: ");
-                person.setNumber(checkNumber(scanner.nextLine()));
-            }
-            case "birth" -> {
-                System.out.print("Enter the birth date: ");
-                String inputDate = scanner.nextLine();
-                person.setBirth(checkBirth(inputDate));
-            }
-            case "gender" -> {
-                System.out.print("Enter gender (M,F): ");
-                String gender = scanner.nextLine().toUpperCase().trim();
-                person.setGender(checkGender(gender));
-            }
-            default -> System.out.println("Bad field!");
-        }
-    }
-
-    public Person newPerson(Scanner scanner){
+    /**
+     * Prompts the user to enter data and creates a new Person instance.
+     *
+     * @param scanner the scanner instance for reading input
+     * @return a newly constructed Person object
+     */
+    public Person newPerson(final Scanner scanner) {
         System.out.print("Enter the name: ");
         String name = scanner.nextLine();
 
@@ -60,25 +38,47 @@ public class PersonService {
         return new Person(name, surname, number, birth, gender);
     }
 
-    public String checkGender(String gender){
+    /**
+     * Validates and returns the gender string.
+     *
+     * @param gender the raw gender input string
+     * @return the validated gender string, or a placeholder if invalid
+     */
+    public String checkGender(final String gender) {
         if (!gender.equals("M") && !gender.equals("F")) {
             System.out.println("Bad gender!");
             return "[no data]";
         }
         return gender;
-
     }
 
-    public String checkBirth(String birth) {
-        String birthDate;
-        try {
-            LocalDate.parse(birth);
-            birthDate = birth;
-        } catch (DateTimeParseException e) {
+    /**
+     * Validates and returns the birthdate string.
+     *
+     * @param birth the raw birthdate input string
+     * @return the validated birthdate string, or a placeholder if invalid
+     */
+    public String checkBirth(final String birth) {
+        if (isValidDate(birth)) {
+            return birth;
+        } else {
             System.out.println("Bad birth date!");
-            birthDate = "[no data]";
+            return "[no data]";
         }
-        return birthDate;
     }
 
+    /**
+     * Helper method to verify if a string is a valid ISO date format.
+     *
+     * @param dateStr the string to test
+     * @return true if valid, false otherwise
+     */
+    private boolean isValidDate(final String dateStr) {
+        try {
+            Objects.requireNonNull(LocalDate.parse(dateStr));
+            return true;
+        } catch (DateTimeParseException e) {
+            return false;
+        }
+    }
 }
