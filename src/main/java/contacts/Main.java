@@ -8,6 +8,9 @@ import contacts.Services.OrganizationService;
 import contacts.Services.PersonService;
 import contacts.Services.SearchService;
 import contacts.Services.SerializationUtils;
+
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -34,7 +37,9 @@ public final class Main {
      * @param args command-line arguments, expects file name as first parameter
      */
     public static void main(final String[] args) {
-        Scanner scanner = new Scanner(System.in);
+        Scanner scanner = new Scanner(new InputStreamReader(
+                System.in, StandardCharsets.UTF_8)
+        );
         if (args.length > 0) {
             fileName = args[0];
             System.out.println("open " + fileName);
